@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        #messages{
+          border: 5px solid darkorange; 
+          height: 80vh;
+          
+          }
+         #messages p{
+          margin: 0;
+          padding: 30px;
+        }
+        #messages :nth-child(odd ){
+         background-color:beige ;
+        }
+        form{
+        display: flex;
+        height: 55px;
+        }
+        #name{
+            flex: 1;
+            padding: 10px;
+        }
+        #message{
+        flex: 5;
+        padding: 10px;
+        }
+        button{
+         flex: 1;
+         padding: 10px;
+         border: none;
+         background-color: coral;
+         color: white;
+        }
+ </style>
+</head>
+<body>
+    
+    <h1 style="font-style: italic;color: darksalmon;display: flex; justify-content: center;">chat-message</h1>
+    <div id="messages">
+    </div>
+    <form action="">
+        <input type="text" id="name" placeholder="Entrez votre nom">
+        <input type="text" id="message" placeholder="Entrer votre message">
+        <button>Envoyer</button>
+    </form>
+    <!--on va chercher socket.io.js-->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        //on se connecte au serveur socket
+        const socket=io();
+    window.onload=() =>{
+        //on ecoute l'evenement submit
+         document.querySelector("form").addEventListener("submit", (e)=>{
+          //ici on va empecher l'envoie du formulaire
+            e.preventDefault();
+            //on va recupere le nom et le message taper
+            const name = document.querySelector("#name");
+            const message = document.querySelector("#message");
+            //on envoie le message on utlisant emit pour emettre un message
+            socket.emit("chat_message",{name:name.value,message:message.value})
+            })
+    };
+    //on ecoute le msg
+   socket.on("chat_message",(msg)=>{
+   console.log(msg);//si on ouvre deux page de la meme serveux on trouve que dans le console les messages ecrit 
+    document.querySelector('#messages').innerHTML +=`<p>${msg.name} dit ${msg.message} </p>`// ici on afficher les messages enregistrer dans le consolelog sur html en tant que palise P
+    document.querySelector('#message').value = ""; // ici on a vider le formulaire du message apres l'envoie du message   
+})
+    </script>
+</body>
+</html>
